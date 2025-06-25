@@ -4,6 +4,7 @@ __author__ = "Tuah Hamid  - AECOM KL"
 __helpurl__ = "https://teams.microsoft.com/l/chat/0/0?users=tuah.hamid@aecom.com"
 
 from Autodesk.Revit.DB import Document, BuiltInCategory, ElementId, ConnectorProfileType, BuiltInParameter, InsulationLiningBase
+
 # ╔═╗╔═╗╔╗╔╔═╗╔╦╗╔═╗╔╗╔╔╦╗╔═╗  
 # ║  ║ ║║║║╚═╗ ║ ╠═╣║║║ ║ ╚═╗  
 # ╚═╝╚═╝╝╚╝╚═╝ ╩ ╩ ╩╝╚╝ ╩ ╚═╝  
@@ -17,24 +18,12 @@ tagging_parameter = "ACM_EC_Absolute Elevation"
 
 sender = __eventsender__
 args = __eventargs__
-
 doc = args.GetDocument() # type:Document
 
 modified_el_ids = args.GetModifiedElementIds()
 deleted_el_ids = args.GetDeletedElementIds()
 new_el_ids = args.GetAddedElementIds()
 modified_el = [doc.GetElement(e_id) for e_id in modified_el_ids]
-
-# only allow cable tray and duct elements to be updated 
-allowed_cats = [ElementId(BuiltInCategory.OST_CableTray), ElementId(BuiltInCategory.OST_DuctCurves)]
-for el in modified_el:
-    if el.Category.Id in allowed_cats:
-        # get cable tray/duct height from element location
-        ct_height = el.Height
-        scaled_height = ct_height / 2
-        ct_elev = el.Location.Curve.Origin.Z - scaled_height
-        elev_param = el.LookupParameter(tagging_parameter)
-        elev_param.Set(ct_elev)
 
 duct_cat_id = ElementId(BuiltInCategory.OST_DuctCurves)
 ct_cat_id = ElementId(BuiltInCategory.OST_CableTray)
